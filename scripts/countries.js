@@ -26,7 +26,7 @@ const insertCountries = async () => {
   try {
     for (const country of countries) {
       const result = await client.query(
-        q.Create(q.Collection("countries"), {
+        q.Create(q.Collection("Country"), {
           data: {
             code: country.code,
             name: country.name,
