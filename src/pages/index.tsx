@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import Head from "next/head";
 import TableRow from "components/TableRow";
-import { useFindAllCountriesQuery, FindAllCountriesDocument, FindAllCountriesQuery } from "generated/graphql";
+import { FindAllCountriesDocument, FindAllCountriesQuery } from "generated/graphql";
 import { NextPage, GetServerSideProps } from "next"
 import { withApollo } from "@apollo/react-hoc";
 import { createApolloClient } from "lib/apollo/createApolloClient";
