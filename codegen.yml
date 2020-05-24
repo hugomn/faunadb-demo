@@ -1,11 +1,11 @@
 overwrite: true
 schema:
-  - https://graphql.fauna.com/graphql:
+  - ${FAUNADB_URL}:
       headers:
-        authorization: "Basic ${FAUNADB_SECRET_KEY}"
+        authorization: "Bearer ${FAUNADB_SECRET_KEY}"
 documents: "graphql/**/*.graphql"
 generates:
-  generated/graphql.tsx:
+  src/generated/graphql.tsx:
     plugins:
       - "typescript"
       - "typescript-operations"
@@ -14,6 +14,7 @@ generates:
     config:
       withHooks: true
       withRefetchFn: true
-  generated/graphql.schema.json:
+      skipTypename: true
+  src/generated/graphql.schema.json:
     plugins:
       - "introspection"

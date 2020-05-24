@@ -1,0 +1,10 @@
+query findAllCountries($size: Int, $cursor: String) {
+  findAllCountries(_size: $size, _cursor: $cursor) {
+    data {
+      code
+      name
+    }
+    after
+    before
+  }
+}

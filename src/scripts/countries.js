@@ -10,7 +10,7 @@ const printCountries = async () => {
       q.Map(
         q.Paginate(
           q.Match(
-            q.Index("all_countries") // specify source
+            q.Index("findAllCountries") // specify source
           )
         ),
         (ref) => q.Get(ref)
@@ -40,5 +40,5 @@ const insertCountries = async () => {
   }
 };
 
-// printCountries();
-insertCountries();
+printCountries();
+// insertCountries();

@@ -1,5 +1,0 @@
-query findCountryById($id: ID!) {
-  findCountryByID(id: $id) {
-    name
-  }
-}

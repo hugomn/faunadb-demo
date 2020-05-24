@@ -31,5 +31,5 @@ type State {
 }
 
 type Query {
-  allCountries: [Country!]
+  findAllCountries: [Country!]
 }
