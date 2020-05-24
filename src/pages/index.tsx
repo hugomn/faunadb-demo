@@ -9,7 +9,8 @@ type IndexPageProps = {
   data: FindAllCountriesQuery
 }
 
-const IndexPage: NextPage<IndexPageProps> = ({ data: { findAllCountries: countries} }) => {
+const IndexPage: NextPage<IndexPageProps> = ({ data }) => {
+  const { findAllCountries: countries } = data || {}
   return (
     <main>
       <Head>
@@ -24,8 +25,8 @@ const IndexPage: NextPage<IndexPageProps> = ({ data: { findAllCountries: countri
             <h4>code</h4>
             <h4 className="telephone">name</h4>
           </div>
-          {countries.data.length > 0 ? (
-            countries.data.map((d) => (
+          {countries?.data.length > 0 ? (
+            countries?.data.map((d) => (
               <TableRow
                 key={d.code}
                 code={d.code}
