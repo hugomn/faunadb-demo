@@ -1,0 +1,19 @@
+overwrite: true
+schema:
+  - https://graphql.fauna.com/graphql:
+      headers:
+        authorization: "Basic ${FAUNADB_SECRET_KEY}"
+documents: "graphql/**/*.graphql"
+generates:
+  generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+      - "fragment-matcher"
+    config:
+      withHooks: true
+      withRefetchFn: true
+  generated/graphql.schema.json:
+    plugins:
+      - "introspection"
