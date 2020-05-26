@@ -117,15 +117,15 @@ export const withApollo = ({ ssr = false }: InitialWithApolloParams = {}) => (
   }
 
   if (ssr || PageComponent.getInitialProps) {
-    WithApollo.getInitialProps = async (ctx: any) => {
+    WithApollo.getServerSideProps = async (ctx: any) => {
       const inAppContext = Boolean(ctx.ctx);
       const { apolloClient } = initOnContext(ctx);
 
       // Run wrapped getInitialProps methods
       let pageProps = {};
 
-      if (PageComponent.getInitialProps) {
-        pageProps = await PageComponent.getInitialProps(ctx);
+      if (PageComponent.getServerSideProps) {
+        pageProps = await PageComponent.getServerSideProps(ctx);
       } else if (inAppContext) {
         pageProps = await App.getInitialProps(ctx);
       }

@@ -2,8 +2,8 @@ import Head from "next/head";
 import TableRow from "components/TableRow";
 import { FindAllCountriesDocument, FindAllCountriesQuery } from "generated/graphql";
 import { NextPage, GetServerSideProps } from "next"
-import { withApollo } from "@apollo/react-hoc";
 import { createApolloClient } from "lib/apollo/createApolloClient";
+import { withApollo } from "lib/apollo";
 
 type IndexPageProps = {
   data: FindAllCountriesQuery
@@ -50,4 +50,4 @@ export const getServerSideProps: GetServerSideProps = async (): Promise<{ props:
   return { props: { data } }
 }
 
-export default withApollo<IndexPageProps>(IndexPage)
+export default withApollo({ ssr: false })(IndexPage)
