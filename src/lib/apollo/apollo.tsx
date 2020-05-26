@@ -15,7 +15,7 @@ interface InitialWithApolloParams {
 
 // On the client, we store the Apollo Client in the following variable.
 // This prevents the client from reinitializing between page transitions.
-let globalApolloClient = null;
+let globalApolloClient: ApolloClient<NormalizedCacheObject> | null = null;
 
 /**
  * Installs the Apollo Client on NextPageContext
@@ -28,14 +28,14 @@ export const initOnContext = (ctx: any) => {
 
   // We consider installing `withApollo({ ssr: true })` on global App level
   // as antipattern since it disables project wide Automatic Static Optimization.
-  // if (process.env.NODE_ENV === 'development') {
-  //   if (inAppContext) {
-  //     console.warn(
-  //       'Warning: You have opted-out of Automatic Static Optimization due to `withApollo` in `pages/_app`.\n' +
-  //         'Read more: https://err.sh/next.js/opt-out-auto-static-optimization\n',
-  //     );
-  //   }
-  // }
+  if (process.env.NODE_ENV === 'development') {
+    if (inAppContext) {
+      console.warn(
+        'Warning: You have opted-out of Automatic Static Optimization due to `withApollo` in `pages/_app`.\n' +
+          'Read more: https://err.sh/next.js/opt-out-auto-static-optimization\n',
+      );
+    }
+  }
 
   // Initialize ApolloClient if not already done
   const apolloClient =
@@ -66,7 +66,7 @@ export const initOnContext = (ctx: any) => {
  */
 const initApolloClient = (
   initialState: NormalizedCacheObject,
-  ctx: NextPageContext,
+  ctx: NextPageContext | null,
 ) => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
@@ -90,7 +90,7 @@ const initApolloClient = (
 export const withApollo = ({ ssr = false }: InitialWithApolloParams = {}) => (
   PageComponent: any,
 ) => {
-  const WithApollo = ({ apolloClient, apolloState, ...pageProps }) => {
+  const WithApollo = ({ apolloClient, apolloState, ...pageProps }: { apolloClient: ApolloClient<NormalizedCacheObject>, apolloState: NormalizedCacheObject}) => {
     let client: ApolloClient<NormalizedCacheObject>;
 
     if (apolloClient) {
@@ -117,15 +117,15 @@ export const withApollo = ({ ssr = false }: InitialWithApolloParams = {}) => (
   }
 
   if (ssr || PageComponent.getInitialProps) {
-    WithApollo.getServerSideProps = async (ctx: any) => {
+    WithApollo.getInitialProps = async (ctx: any) => {
       const inAppContext = Boolean(ctx.ctx);
       const { apolloClient } = initOnContext(ctx);
 
       // Run wrapped getInitialProps methods
       let pageProps = {};
 
-      if (PageComponent.getServerSideProps) {
-        pageProps = await PageComponent.getServerSideProps(ctx);
+      if (PageComponent.getInitialProps) {
+        pageProps = await PageComponent.getInitialProps(ctx);
       } else if (inAppContext) {
         pageProps = await App.getInitialProps(ctx);
       }

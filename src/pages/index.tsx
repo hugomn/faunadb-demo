@@ -1,7 +1,7 @@
 import Head from "next/head";
 import TableRow from "components/TableRow";
 import { FindAllCountriesDocument, FindAllCountriesQuery } from "generated/graphql";
-import { NextPage, GetServerSideProps } from "next"
+import { NextPage, GetStaticProps } from "next"
 import { createApolloClient } from "lib/apollo/createApolloClient";
 import { withApollo } from "lib/apollo";
 
@@ -28,15 +28,15 @@ const IndexPage: NextPage<IndexPageProps> = ({ data }) => {
           {countries?.data.length > 0 ? (
             countries?.data.map((d) => (
               <TableRow
-                key={d.code}
-                code={d.code}
-                name={d.name}
+                key={d?.code}
+                code={d?.code}
+                name={d?.name}
                 loading={false}
               />
             ))
           ) : (
             <>
-              <TableRow key={null} code={null} name={null} loading />
+              No data...
             </>
           )}
         </div>
@@ -45,7 +45,7 @@ const IndexPage: NextPage<IndexPageProps> = ({ data }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (): Promise<{ props: {} }> => {
+export const getStaticProps: GetStaticProps = async (): Promise<{ props: {} }> => {
   const { data } = await createApolloClient()?.query({ query: FindAllCountriesDocument })
   return { props: { data } }
 }

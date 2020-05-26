@@ -1,11 +1,14 @@
 import { NextPageContext } from "next";
 import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
+import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
 import fetch from "isomorphic-unfetch";
 
-export const createApolloClient = (initialState?, ctx?: NextPageContext) => {
+export const createApolloClient = (
+  initialState?: NormalizedCacheObject,
+  ctx?: NextPageContext | null
+) => {
   const fetchOptions = { agent: null };
 
   const httpLink = new HttpLink({
@@ -28,6 +31,6 @@ export const createApolloClient = (initialState?, ctx?: NextPageContext) => {
     connectToDevTools: Boolean(ctx),
     ssrMode: Boolean(ctx),
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache().restore(initialState),
+    cache: new InMemoryCache().restore(initialState as NormalizedCacheObject),
   });
 };
