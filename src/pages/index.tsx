@@ -1,7 +1,7 @@
 import Head from "next/head";
 import TableRow from "components/TableRow";
 import { FindAllCountriesDocument, FindAllCountriesQuery } from "generated/graphql";
-import { NextPage, GetStaticProps } from "next"
+import { NextPage, GetServerSideProps } from "next"
 import { createApolloClient } from "lib/apollo/createApolloClient";
 import { withApollo } from "lib/apollo";
 
@@ -45,7 +45,7 @@ const IndexPage: NextPage<IndexPageProps> = ({ data }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async (): Promise<{ props: {} }> => {
+export const getServerSideProps: GetServerSideProps = async (): Promise<{ props: {} }> => {
   const { data } = await createApolloClient()?.query({ query: FindAllCountriesDocument })
   return { props: { data } }
 }
