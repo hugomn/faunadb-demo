@@ -45,8 +45,8 @@ const IndexPage: NextPage<IndexPageProps> = ({ data }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (): Promise<{ props: {} }> => {
-  const { data } = await createApolloClient()?.query({ query: FindAllCountriesDocument })
+export const getServerSideProps: GetServerSideProps = async (context): Promise<{ props: {} }> => {
+  const { data } = await createApolloClient(context.req.headers.cookie)?.query({ query: FindAllCountriesDocument })
   return { props: { data } }
 }
 

@@ -4,8 +4,11 @@ import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
 import fetch from "isomorphic-unfetch";
+import cookieParser from "cookie";
+import { FAUNA_SECRET_COOKIE } from "utils/fauna-auth";
 
 export const createApolloClient = (
+  cookie?: string,
   initialState?: NormalizedCacheObject,
   ctx?: NextPageContext | null
 ) => {
@@ -18,11 +21,12 @@ export const createApolloClient = (
     fetchOptions,
   });
 
+  const cookies = cookieParser.parse(cookie ?? "");
   const authLink = setContext((_request, { headers }) => {
     return {
       headers: {
         ...headers,
-        authorization: `Bearer ${process.env.FAUNADB_SECRET_KEY}`,
+        authorization: `Bearer ${cookies[FAUNA_SECRET_COOKIE]}`,
       },
     };
   });
