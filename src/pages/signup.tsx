@@ -1,21 +1,7 @@
 import { useState } from 'react'
 import Router from 'next/router'
 
-const signin = async (email: string, password: string) => {
-  const response = await fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  })
-
-  if (response.status !== 200) {
-    throw new Error(await response.text())
-  }
-
-  Router.push('/')
-}
-
-function Login() {
+function Signup() {
   const [userData, setUserData] = useState({
     email: '',
     password: '',
@@ -30,7 +16,17 @@ function Login() {
     const password = userData.password
 
     try {
-      await signin(email, password)
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (response.status !== 200) {
+        throw new Error(await response.text())
+      }
+
+      Router.push('/')
     } catch (error) {
       console.error(error)
       setUserData({ ...userData, error: error.message })
@@ -39,7 +35,7 @@ function Login() {
 
   return (
     <>
-      <div className="login">
+      <div className="signup">
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
 
@@ -68,13 +64,13 @@ function Login() {
             }
           />
 
-          <button type="submit">Login</button>
+          <button type="submit">Sign up</button>
 
           {userData.error && <p className="error">Error: {userData.error}</p>}
         </form>
       </div>
       <style jsx>{`
-        .login {
+        .signup {
           max-width: 340px;
           margin: 0 auto;
           padding: 1rem;
@@ -107,4 +103,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Signup

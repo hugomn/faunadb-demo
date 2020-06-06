@@ -1,4 +1,4 @@
-import { NextPageContext } from "next";
+import { NextPageContext, GetServerSidePropsContext } from "next";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
@@ -7,26 +7,32 @@ import fetch from "isomorphic-unfetch";
 import cookieParser from "cookie";
 import { FAUNA_SECRET_COOKIE } from "utils/fauna-auth";
 
+export const getApolloClientFromContext = (
+  context: GetServerSidePropsContext
+) => {
+  const cookies = cookieParser.parse(context.req.headers.cookie ?? "");
+  return createApolloClient(cookies[FAUNA_SECRET_COOKIE]);
+};
+
 export const createApolloClient = (
-  cookie?: string,
+  faunaSecret: string,
   initialState?: NormalizedCacheObject,
   ctx?: NextPageContext | null
 ) => {
   const fetchOptions = { agent: null };
 
   const httpLink = new HttpLink({
-    uri: process.env.FAUNADB_URL,
+    uri: process.env.NEXT_PUBLIC_FAUNADB_URL,
     credentials: "same-origin",
     fetch,
     fetchOptions,
   });
 
-  const cookies = cookieParser.parse(cookie ?? "");
   const authLink = setContext((_request, { headers }) => {
     return {
       headers: {
         ...headers,
-        authorization: `Bearer ${cookies[FAUNA_SECRET_COOKIE]}`,
+        authorization: `Bearer ${faunaSecret}`,
       },
     };
   });

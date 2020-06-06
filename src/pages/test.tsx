@@ -1,8 +1,15 @@
 import { NextPage } from "next"
-import { withApollo } from "lib/apollo"
+import { useFindAllCountriesQuery } from "generated/graphql"
+import BaseTemplate from "templates/Base"
 
 const Test: NextPage = () => {
-    return <div>Test</div>
+    const { data, loading } = useFindAllCountriesQuery()
+    if (loading) {
+        return <div>Loading...</div>
+    }
+    return <BaseTemplate>
+    <ul>{data?.findAllCountries.data.map(country => <li key={country?.code}>{country?.name}</li>)}</ul>
+    </BaseTemplate>
 }
 
-export default withApollo({ ssr: true })(Test)
+export default Test

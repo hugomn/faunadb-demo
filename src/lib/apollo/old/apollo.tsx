@@ -6,7 +6,10 @@ import ApolloClient from 'apollo-client';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { ApolloProvider } from '@apollo/react-hooks';
 
-import { createApolloClient } from './createApolloClient';
+import { createApolloClient } from './apolloClient';
+import { parseCookies } from 'nookies';
+import { FAUNA_SECRET_COOKIE } from 'utils/fauna-auth';
+import cookieParser from "cookie";
 
 interface InitialWithApolloParams {
   /** If server-side rendering enabled */
@@ -23,7 +26,7 @@ let globalApolloClient: ApolloClient<NormalizedCacheObject> | null = null;
  * inside getStaticProps, getStaticPaths or getServerSideProps
  * @param { NextPageContext | AppContext } ctx
  */
-export const initOnContext = (ctx: any, cookie?: string) => {
+export const initOnContext = (ctx: any, faunaSecret: string) => {
   const inAppContext = Boolean(ctx.ctx);
 
   // We consider installing `withApollo({ ssr: true })` on global App level
@@ -40,7 +43,7 @@ export const initOnContext = (ctx: any, cookie?: string) => {
   // Initialize ApolloClient if not already done
   const apolloClient =
     ctx.apolloClient ||
-    initApolloClient(ctx.apolloState || {}, inAppContext ? ctx.ctx : ctx, cookie);
+    initApolloClient(ctx.apolloState || {}, inAppContext ? ctx.ctx : ctx, faunaSecret);
 
   // We send the Apollo Client as a prop to the component to avoid calling initApollo() twice in the server.
   // Otherwise, the component would have to call initApollo() again but this
@@ -67,17 +70,17 @@ export const initOnContext = (ctx: any, cookie?: string) => {
 const initApolloClient = (
   initialState: NormalizedCacheObject,
   ctx: NextPageContext | null,
-  cookie?: string
+  faunaSecret: string
 ) => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (typeof window === 'undefined') {
-    return createApolloClient(cookie, initialState, ctx);
+    return createApolloClient(faunaSecret, initialState, ctx);
   }
 
   // Reuse client on the client-side
   if (!globalApolloClient) {
-    globalApolloClient = createApolloClient(cookie, initialState, ctx);
+    globalApolloClient = createApolloClient(faunaSecret, initialState, ctx);
   }
 
   return globalApolloClient;
@@ -99,7 +102,8 @@ export const withApollo = ({ ssr = false }: InitialWithApolloParams = {}) => (
       client = apolloClient;
     } else {
       // Happens on: next.js CSR
-      client = initApolloClient(apolloState, null);
+      const cookies = parseCookies()
+      client = initApolloClient(apolloState, null, cookies[FAUNA_SECRET_COOKIE]);
     }
 
     return (
@@ -120,7 +124,15 @@ export const withApollo = ({ ssr = false }: InitialWithApolloParams = {}) => (
   if (ssr || PageComponent.getInitialProps) {
     WithApollo.getInitialProps = async (ctx: any) => {
       const inAppContext = Boolean(ctx.ctx);
-      const { apolloClient } = initOnContext(ctx, ctx.req.headers.cookie);
+      const { FAUNA_SECRET_COOKIE: secret } = cookieParser.parse(ctx.req.headers.cookie ?? "")
+
+      // TODO find a way to check auth
+      // console.log('secret: ', secret)
+      // if (!secret) {
+      //   ctx.res.writeHead(302, { Location: '/login' });
+      // }
+
+      const { apolloClient } = initOnContext(ctx, secret);
 
       // Run wrapped getInitialProps methods
       let pageProps = {};

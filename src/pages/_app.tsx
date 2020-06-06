@@ -1,9 +1,15 @@
-import { AppProps } from 'next/app'
-import React from 'react'
+import { ApolloProvider } from '@apollo/react-hooks'
+import { useApollo } from 'lib/apollo'
 import './index.css'
+import { AppProps } from 'next/app'
+import { AuthWrapper } from 'lib/auth'
 
-const CustomApp = ({ Component, pageProps }: AppProps) => {
-    return <Component {...pageProps} />;
-};
+export default function App({ Component, pageProps }: AppProps) {
+  const apolloClient = useApollo(pageProps.initialApolloState)
 
-export default CustomApp;
+  return (
+    <ApolloProvider client={apolloClient}>
+        <Component {...pageProps} />
+    </ApolloProvider>
+  )
+}

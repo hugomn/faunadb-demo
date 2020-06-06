@@ -10,7 +10,7 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
       throw new Error("Email and password must be provided.");
     }
 
-    const loginRes = await serverClient.query(
+    const loginRes: { secret: string } = await serverClient.query(
       q.Login(q.Match(q.Index("users_by_email"), email), {
         password,
       })

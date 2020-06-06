@@ -18,7 +18,7 @@ export const serializeFaunaCookie = (userSecret) => {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     maxAge: 72576000,
-    httpOnly: true,
+    httpOnly: false,
     path: "/",
   });
   return cookieSerialized;

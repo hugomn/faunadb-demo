@@ -2,17 +2,17 @@ import Head from "next/head";
 import TableRow from "components/TableRow";
 import { FindAllCountriesDocument, FindAllCountriesQuery } from "generated/graphql";
 import { NextPage, GetServerSideProps } from "next"
-import { createApolloClient } from "lib/apollo/createApolloClient";
-import { withApollo } from "lib/apollo";
+import { getApolloClientFromContext } from "lib/apollo";
+import BaseTemplate from "templates/Base";
 
 type IndexPageProps = {
   data: FindAllCountriesQuery
 }
 
-const IndexPage: NextPage<IndexPageProps> = ({ data }) => {
+const IndexPage: React.FC<IndexPageProps> = ({ data }) => {
   const { findAllCountries: countries } = data || {}
   return (
-    <main>
+    <BaseTemplate>
       <Head>
         <title>Samaritan</title>
       </Head>
@@ -41,13 +41,13 @@ const IndexPage: NextPage<IndexPageProps> = ({ data }) => {
           )}
         </div>
       </div>
-    </main>
+    </BaseTemplate>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context): Promise<{ props: {} }> => {
-  const { data } = await createApolloClient(context.req.headers.cookie)?.query({ query: FindAllCountriesDocument })
+  const { data } = await getApolloClientFromContext(context).query({ query: FindAllCountriesDocument })
   return { props: { data } }
 }
 
-export default withApollo({ ssr: false })(IndexPage)
+export default IndexPage
