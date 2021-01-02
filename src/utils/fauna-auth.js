@@ -4,7 +4,7 @@ import cookie from "cookie";
 export const FAUNA_SECRET_COOKIE = "faunaSecret";
 
 export const serverClient = new faunadb.Client({
-  secret: process.env.FAUNADB_SECRET_KEY,
+  secret: process.env.NEXT_PUBLIC_FAUNADB_SECRET_KEY,
 });
 
 // Used for any authed requests.

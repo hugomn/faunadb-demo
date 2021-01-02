@@ -22,7 +22,7 @@ export const createApolloClient = (
   const fetchOptions = { agent: null };
 
   const httpLink = new HttpLink({
-    uri: process.env.FAUNADB_URL,
+    uri: process.env.NEXT_PUBLIC_FAUNADB_URL,
     credentials: "same-origin",
     fetch,
     fetchOptions,

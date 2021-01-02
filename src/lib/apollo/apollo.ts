@@ -14,7 +14,7 @@ const createApolloClient = (token?: string) => {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
-      uri: process.env.FAUNADB_URL,
+      uri: process.env.NEXT_PUBLIC_FAUNADB_URL,
       credentials: "same-origin",
       headers: {
         authorization: `Bearer ${cookies[FAUNA_SECRET_COOKIE] || token}`,

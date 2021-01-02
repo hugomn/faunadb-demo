@@ -1,5 +1,5 @@
 const faunadb = require("faunadb");
-const secret = process.env.FAUNADB_SECRET_KEY;
+const secret = process.env.NEXT_PUBLIC_FAUNADB_SECRET_KEY;
 const q = faunadb.query;
 const client = new faunadb.Client({ secret });
 const countries = require("../data/countries.json");
